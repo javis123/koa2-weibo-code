@@ -1,0 +1,11 @@
+<html>
+  <header>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+  </header>
+  <body>
+    <h1><%= title %></h1>
+    <%- include('widgets/user-info',{ isMe }) %>
+    <%- include('widgets/blog-list',{ blogList }) %>
+  </body>
+</html>
