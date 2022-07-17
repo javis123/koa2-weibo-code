@@ -1,6 +1,6 @@
 /**
  * @description sequelize同步
- * @author zk
+ * @author zkd
  */
 const seq = require('sequelize')
 
