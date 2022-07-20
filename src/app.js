@@ -11,7 +11,8 @@ const redisStore = require('koa-redis')
 const { REDIS_CONF } = require('./conf/db')
 
 const index = require('./routes/index')
-const users = require('./routes/users')
+const userViewRouter = require('./routes/view/user')
+const userAPIRouter = require('./routes/api/user')
 const errorViewRouter = require('./routes/view/error')
 
 // error handler
@@ -51,8 +52,9 @@ app.use(session({
 }))
 // routes
 app.use(index.routes(), index.allowedMethods())
-app.use(users.routes(), users.allowedMethods())
-app.use(errorViewRouter.routes(),errorViewRouter.allowedMethods())//
+app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
+app.use(userAPIRouter.routes(),userAPIRouter.allowedMethods())
+app.use(errorViewRouter.routes(),errorViewRouter.allowedMethods())//404和错误页要放到最底下
 
 // error-handling
 app.on('error', (err, ctx) => {

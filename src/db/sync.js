@@ -2,11 +2,12 @@
  * @description sequelize同步
  * @author zkd
  */
-const seq = require('sequelize')
+const seq = require('./seq')
+require('./model/index')
 
 seq.authenticate().then(res => {
   console.log('auth ok')
-}).then(err => {
+}).catch(err => {
   console.log('auth err')
 })
 
