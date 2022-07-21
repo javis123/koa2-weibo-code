@@ -8,7 +8,8 @@
 */
 const { 
   registerUserNameNotExistInfo,
-  registerUserNameExistInfo 
+  registerUserNameExistInfo,
+  loginFailInfo 
 } = require('../model/ErrorInfo')
 const { getUserInfo,createUser } = require('../services/user')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
@@ -50,7 +51,20 @@ async function register({ userName, password, gender }){
     )
   }
 }
+
+async function login( ctx, userName, password) {
+  password = doCrypto(password)
+  const userInfo = await getUserInfo(userName, password)
+  if(!userInfo){
+    return new ErrorModel(loginFailInfo)
+  }
+  if(ctx.session.userInfo == null) {
+    ctx.session.userInfo = userInfo
+  }
+  return new SuccessModel()
+}
 module.exports = {
   isExist,
-  register
+  register,
+  login
 }

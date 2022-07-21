@@ -43,7 +43,6 @@ async function createUser({ userName, password, gender = 3, nickName}){
     gender,
     nickName: nickName ? nickName:userName
   })
-  
 }
 
 module.exports = {
