@@ -51,7 +51,13 @@ async function register({ userName, password, gender }){
     )
   }
 }
-
+/**
+ * 
+ * @param {Object} ctx 
+ * @param {string} userName 
+ * @param {string} password 
+ * @returns 
+ */
 async function login( ctx, userName, password) {
   password = doCrypto(password)
   const userInfo = await getUserInfo(userName, password)
