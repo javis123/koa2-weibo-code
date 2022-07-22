@@ -9,9 +9,14 @@
 const { 
   registerUserNameNotExistInfo,
   registerUserNameExistInfo,
-  loginFailInfo 
+  loginFailInfo,
+  changeInfoFailInfo
 } = require('../model/ErrorInfo')
-const { getUserInfo,createUser } = require('../services/user')
+const {
+  getUserInfo,
+  createUser,
+  updateUser
+} = require('../services/user')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
 const doCrypto = require('../utils/cryp')
 /**
@@ -52,7 +57,7 @@ async function register({ userName, password, gender }){
   }
 }
 /**
- * 
+ * 登录
  * @param {Object} ctx 
  * @param {string} userName 
  * @param {string} password 
@@ -69,8 +74,31 @@ async function login( ctx, userName, password) {
   }
   return new SuccessModel()
 }
+/**
+ *
+ * @param {Object} ctx ctx
+ * @param {string} nickName 昵称
+ * @param {string} city 城市
+ * @param {string} picture 头像
+ */
+async function changeInfo( ctx,{ nickName, city, picture }){
+  const userName = ctx.session.userInfo.userName
+  const result = await updateUser(
+    {
+      newNickName: nickName,
+      newCity: city,
+      newPicture: picture
+    },
+    { userName })
+  if(result){
+    Object.assign(ctx.session.userInfo, { nickName, city, picture })
+    return new SuccessModel()
+  }
+  return new ErrorModel(changeInfoFailInfo)
+}
 module.exports = {
   isExist,
   register,
-  login
+  login,
+  changeInfo
 }

@@ -34,4 +34,5 @@ router.get('/setting',loginRedirect,async (ctx, next) => {
   await ctx.render('setting',ctx.session.userInfo)
 })
 
+
 module.exports = router

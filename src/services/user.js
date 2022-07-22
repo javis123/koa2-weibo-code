@@ -44,7 +44,42 @@ async function createUser({ userName, password, gender = 3, nickName}){
     nickName: nickName ? nickName:userName
   })
 }
-
+/**
+ *
+ * @param {Object} param0 要修改的资料
+ * @param {Object} param1 查询所需的资料
+ */
+async function updateUser(
+  { newPassword, newNickName, newCity, newPicture },
+  { password, userName }
+) {
+  const updateData = {}
+  if(newPassword){
+    updateData.password = newPassword
+  }
+  if(newNickName){
+    updateData.nickName = newNickName
+  }
+  if(newCity){
+    updateData.city = newCity
+  }
+  if(newPicture){
+    updateData.picture = newPicture
+  }
+  const searchData = {
+    userName
+  }
+  if(password){
+    searchData.password = password
+  }
+  const result = await User.update(updateData,
+    {
+      where: searchData
+    })
+  return result[0] > 0
+}
 module.exports = {
-  getUserInfo,createUser
+  getUserInfo,
+  createUser,
+  updateUser
 }
