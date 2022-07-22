@@ -10,7 +10,8 @@ const {
   registerUserNameNotExistInfo,
   registerUserNameExistInfo,
   loginFailInfo,
-  changeInfoFailInfo
+  changeInfoFailInfo,
+  changePasswordFailInfo
 } = require('../model/ErrorInfo')
 const {
   getUserInfo,
@@ -96,9 +97,37 @@ async function changeInfo( ctx,{ nickName, city, picture }){
   }
   return new ErrorModel(changeInfoFailInfo)
 }
+
+async function changePassword(userName, password, newPassword) {
+  const result = await updateUser(
+    {
+      newPassword: doCrypto(newPassword)
+    },
+    {
+      userName,
+      password: doCrypto(password)
+    }
+  )
+  if(result){
+    return new SuccessModel()
+  }
+  return new ErrorModel(changePasswordFailInfo)
+}
+/**
+ * 退出登录
+ * @param {Object} ctx ctx
+ * @returns
+ */
+async function logout(ctx) {
+  delete ctx.session.userInfo
+  return new SuccessModel()
+}
+
 module.exports = {
   isExist,
   register,
   login,
-  changeInfo
+  changeInfo,
+  changePassword,
+  logout
 }
