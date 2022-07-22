@@ -4,5 +4,5 @@
  */
 
 module.exports = {
-  DEFAULT_PICTURE: '../public/images/moren.jpeg'
+  DEFAULT_PICTURE: '/images/moren.jpeg'
 }
