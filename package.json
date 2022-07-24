@@ -30,7 +30,8 @@
     "mysql2": "^2.3.3",
     "pug": "^2.0.3",
     "redis": "^4.2.0",
-    "sequelize": "^6.21.3"
+    "sequelize": "^6.21.3",
+    "xss": "^1.0.13"
   },
   "devDependencies": {
     "babel-eslint": "^10.0.3",

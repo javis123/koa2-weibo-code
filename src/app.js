@@ -13,7 +13,8 @@ const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 const koaStatic = require('koa-static')
 const path = require('path')
 
-const blogViewRouter = require('../src/routes/view/blog')
+const blogViewRouter = require('./routes/view/blog')
+const homeAPIRouter = require('./routes/api/blog-home')
 const utilsAPIRouter = require('./routes/api/utils')
 const userViewRouter = require('./routes/view/user')
 const userAPIRouter = require('./routes/api/user')
@@ -57,10 +58,11 @@ app.use(session({
 }))
 // routes
 app.use(blogViewRouter.routes(), blogViewRouter.allowedMethods())
-app.use(utilsAPIRouter.routes(),utilsAPIRouter.allowedMethods())
+app.use(homeAPIRouter.routes(), homeAPIRouter.allowedMethods())
+app.use(utilsAPIRouter.routes(), utilsAPIRouter.allowedMethods())
 app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
-app.use(userAPIRouter.routes(),userAPIRouter.allowedMethods())
-app.use(errorViewRouter.routes(),errorViewRouter.allowedMethods())//404和错误页要放到最底下
+app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())
+app.use(errorViewRouter.routes(), errorViewRouter.allowedMethods())//404和错误页要放到最底下
 
 // error-handling
 app.on('error', (err, ctx) => {
