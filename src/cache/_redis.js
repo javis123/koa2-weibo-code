@@ -29,8 +29,12 @@ function set(key, val, timeout = 60 * 60){
 function get(key){
   const promise = new Promise((resolve, reject) => {
     redisClient.get(key, (err, val) => {
+      if(err){
+        reject(err)
+        return
+      }
       if(val == null){
-        resolve({})
+        resolve(null)
         return
       }
       try{
