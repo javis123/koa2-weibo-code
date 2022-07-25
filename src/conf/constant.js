@@ -4,5 +4,6 @@
  */
 
 module.exports = {
-  DEFAULT_PICTURE: '/images/moren.jpeg'
+  DEFAULT_PICTURE: '/images/moren.jpeg',
+  PAGE_SIZE: 5
 }

@@ -13,6 +13,7 @@ const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 const koaStatic = require('koa-static')
 const path = require('path')
 
+const profileAPIRouter = require('./routes/api/blog-profile')
 const blogViewRouter = require('./routes/view/blog')
 const homeAPIRouter = require('./routes/api/blog-home')
 const utilsAPIRouter = require('./routes/api/utils')
@@ -57,6 +58,7 @@ app.use(session({
   })
 }))
 // routes
+app.use(profileAPIRouter.routes(),profileAPIRouter.allowedMethods())
 app.use(blogViewRouter.routes(), blogViewRouter.allowedMethods())
 app.use(homeAPIRouter.routes(), homeAPIRouter.allowedMethods())
 app.use(utilsAPIRouter.routes(), utilsAPIRouter.allowedMethods())
