@@ -5,7 +5,11 @@
 
 const { User,UserRelation } = require('../db/model/index')
 const { formatUser } = require('./_format')
-
+/**
+ * 通过被关注人找到关注人的信息
+ * @param {number} followerId 关注人id
+ * @returns 
+ */
 async function getUsersByFollower(followerId) {
   const result = await User.findAndCountAll({
     attributes: ['id', 'userName', 'nickName', 'picture'],
@@ -27,6 +31,38 @@ async function getUsersByFollower(followerId) {
   return {
     count,
     userList
+  }
+}
+/**
+ * 
+ * @param {number} userId 粉丝id
+ * @returns 
+ */
+async function getFollowersByUser(userId) {
+  const result = await UserRelation.findAndCountAll({
+    order: [
+      ['id','desc']
+    ],
+    include: [
+      {
+        model: User,
+        attributes: ['id','userName','nickName','picture'],
+      }
+    ],
+    where: {
+      userId
+    }
+  })
+  const count = result.count
+  let userList = result.rows.map(row => row.dataValues)
+  userList = userList.map(data => {
+    let user = data.user.dataValues
+    user = formatUser(user)
+    return user
+  })
+  return {
+    userList,
+    count
   }
 }
 /**
@@ -60,5 +96,6 @@ async function deleteFollower(userId, followerId) {
 module.exports = {
   getUsersByFollower,
   addFollower,
-  deleteFollower
+  deleteFollower,
+  getFollowersByUser
 }
