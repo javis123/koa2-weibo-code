@@ -21,20 +21,29 @@ router.get('/profile', loginRedirect, async ( ctx, next) => {
 })
 router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
   const myUserInfo = ctx.session.userInfo
-  const muUserName = myUserInfo.userName
+  const myUserName = myUserInfo.userName
   const { userName: curUserName } = ctx.params
-  const isMe = myUserInfo === curUserName
+  //看是不是登陆的人
+  const isMe = myUserName === curUserName
   let curUserInfo
   if(isMe){
     curUserInfo = myUserInfo
   }else{
+    //看你查的这个人是否存在
     const result = await isExist(curUserName)
     if(result.errno === 0){
       curUserInfo = result.data
     }
   }
   const userId = curUserInfo.id
+  //获取粉丝列表
   const { count: fansCount, fansList } = (await getFans(userId)).data
+  console.log(fansList.picture)
+  //查看是否已关注此人
+  const amIFollowed = fansList.some(fan => {
+    return fan.userName === myUserName
+  })
+  //获取微博列表
   const result = await getProfileBlogList(curUserName, 0)
   const { isEmpty, blogList, count, pageIndex, pageSize } = result.data
   await ctx.render('profile', {
@@ -51,7 +60,8 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
       fansData: {
         count: fansCount,
         list: fansList
-      }
+      },
+      amIFollowed
     },
   })
 })

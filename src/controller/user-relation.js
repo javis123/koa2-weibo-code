@@ -2,8 +2,9 @@
  * @description 粉丝逻辑的实现
  * @author zk
  */
-const { SuccessModel } = require('../model/ResModel')
-const { getUsersByFollower } = require('../services/user-relation')
+const { SuccessModel,ErrorModel } = require('../model/ResModel')
+const { getUsersByFollower,addFollower,deleteFollower } = require('../services/user-relation')
+const { addFollowerFailInfo,deleteFollowerFailInfo } = require('../model/ErrorInfo')
 /**
  * 根据userId获取粉丝列表
  * @param {number} userId 被关注者Id
@@ -17,6 +18,26 @@ async function getFans(userId) {
   })
 }
 
+async function follow(myUserId, curUserId) {
+  try{
+    await addFollower(myUserId, curUserId)
+    return new SuccessModel()
+  }catch(ex){
+    return new ErrorModel(addFollowerFailInfo)
+  }
+}
+
+
+async function unFollow(myUserId, curUserId) {
+  const result = deleteFollower(myUserId, curUserId)
+  if(result){
+    return new SuccessModel()
+  }
+  return new ErrorModel(deleteFollowerFailInfo)
+}
+
 module.exports = {
-  getFans
+  getFans,
+  follow,
+  unFollow
 }
