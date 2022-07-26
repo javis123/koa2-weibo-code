@@ -11,7 +11,7 @@ const User = seq.define('user',{
     type: STRING,
     allowNull: false,
     unique: true,
-    commit: '用户名唯一'
+    comment: '用户名唯一'
   },
   password: {
     type: STRING,
@@ -25,15 +25,15 @@ const User = seq.define('user',{
     type: DECIMAL,
     allowNull: false,
     defaultValue: 3,
-    commit: '性别（1为男性，2为女性，3为保密'
+    comment: '性别（1为男性，2为女性，3为保密'
   },
   picture: {
     type: STRING,
-    commit: '头像，图片地址'
+    comment: '头像，图片地址'
   },
   city: {
     type: STRING,
-    commit: '城市'
+    comment: '城市'
   },
 })
 
