@@ -5,6 +5,7 @@
 
 const { User } = require('../db/model/index')
 const { formatUser } = require('./_format')
+const { addFollower } = require('./user-relation')
 /**
  * 
  * @param {string} userName 
@@ -43,6 +44,9 @@ async function createUser({ userName, password, gender = 3, nickName}){
     gender,
     nickName: nickName ? nickName:userName
   })
+  const data = result.dataValues
+  addFollower(data.id, data.id)
+  return data
 }
 /**
  *
