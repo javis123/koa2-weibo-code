@@ -8,6 +8,7 @@ const { loginRedirect } = require('../../middlewave/loginCheck')
 const { getProfileBlogList } = require('../../controller/blog-profile')
 const { isExist } = require('../../controller/user')
 const { getSquareBlogList } = require('../../controller/blog-square')
+const { getFans } = require('../../controller/user-relation')
 
 //首页
 router.get('/', loginRedirect, async (ctx, next) => {
@@ -32,6 +33,8 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
       curUserInfo = result.data
     }
   }
+  const userId = curUserInfo.id
+  const { count: fansCount, fansList } = (await getFans(userId)).data
   const result = await getProfileBlogList(curUserName, 0)
   const { isEmpty, blogList, count, pageIndex, pageSize } = result.data
   await ctx.render('profile', {
@@ -44,8 +47,12 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
     },
     userData: {
       isMe,
-      userInfo: curUserInfo
-    }
+      userInfo: curUserInfo,
+      fansData: {
+        count: fansCount,
+        list: fansList
+      }
+    },
   })
 })
 
