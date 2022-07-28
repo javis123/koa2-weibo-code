@@ -1,5 +1,5 @@
 
-const { Blog,User } = require('../db/model/index')
+const { Blog,User,UserRelation } = require('../db/model/index')
 const { formatUser,formatBlog } = require('./_format')
 
 async function createBlog({ userId, content, image }) {
@@ -49,7 +49,40 @@ async function getBlogListByUser(
   }
 }
 
+async function getFollowersBlogList({ userId, pageIndex = 0, pageSize = 10}) {
+  const result = await Blog.findAndCountAll({
+    limit: pageSize,
+    offset: pageIndex * pageSize,
+    order: [
+      ['id','desc']
+    ],
+    include: [
+      {
+        model: User,
+        attributes: ['userName', 'nickName', 'picture'],
+      },
+      {
+        model: UserRelation,
+        attributes: ['userId','followerId'],
+        where: { userId }
+      }
+    ]
+  })
+  let blogList = result.rows.map(row => row.dataValues)
+  blogList = formatBlog(blogList)
+  blogList = blogList.map(blogItem => {
+    console.log(blogItem)
+    blogItem.user = formatUser(blogItem.user.dataValues)
+    return blogItem
+  })
+  return {
+    count: result.count,
+    blogList
+  }
+}
+
 module.exports = {
   createBlog,
-  getBlogListByUser
+  getBlogListByUser,
+  getFollowersBlogList
 }

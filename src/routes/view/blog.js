@@ -9,10 +9,40 @@ const { getProfileBlogList } = require('../../controller/blog-profile')
 const { isExist } = require('../../controller/user')
 const { getSquareBlogList } = require('../../controller/blog-square')
 const { getFans,getFollowers } = require('../../controller/user-relation')
+const { getHomeBlogList } = require('../../controller/blog-home')
 
 //首页
 router.get('/', loginRedirect, async (ctx, next) => {
-  await ctx.render('index',{})
+  const userInfo = ctx.session.userInfo
+  const { id: userId } = userInfo
+  // console.log('userId:',userId)
+  const fansResult = (await getFans(userId)).data
+  const { count: fansCount, fansList } = fansResult
+  console.log(fansList)
+  const followersResult = (await getFollowers(userId)).data
+  const { count: followersCount, followersList } = followersResult
+  const res = await getHomeBlogList(userId,0)
+  const { blogList, count, pageIndex, pageSize, isEmpty } = res.data
+  await ctx.render('index',{
+    userData: {
+      userInfo,
+      fansData: {
+        count: fansCount,
+        list: fansList
+      },
+      followersData: {
+        count: followersCount,
+        list: followersList
+      }
+    },
+    blogData: {
+      blogList,
+      count,
+      pageIndex,
+      pageSize,
+      isEmpty
+    }
+  })
 })
 
 router.get('/profile', loginRedirect, async ( ctx, next) => {
