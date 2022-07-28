@@ -13,9 +13,8 @@ const {
 } = require('../../controller/user')
 const { loginCheck } = require('../../middlewave/loginCheck')
 const { genValidator } = require('../../middlewave/validate')
-const { jsonSchemaFileInfo, loginCheckFailInfo } = require('../../model/ErrorInfo')
-const { ErrorModel } = require('../../model/ResModel')
 const userValidate = require('../../validator/user')
+const { getFollowers } = require('../../controller/user-relation')
 
 router.prefix('/api/user')
 
@@ -47,5 +46,13 @@ router.patch('/changePassword', loginCheck, genValidator(userValidate), async (c
 
 router.post('/logout', loginCheck, async (ctx, next) => {
   ctx.body = await logout(ctx)
+})
+
+router.get('/getAtList', loginCheck, async (ctx, next) => {
+  const { id:userId } = ctx.session.userInfo
+  const result = await getFollowers(userId)
+  ctx.body = result.data.followersList.map(follower => {
+    return `${follower.nickName} - ${follower.userName}`
+  })
 })
 module.exports = router

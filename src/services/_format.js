@@ -3,7 +3,7 @@
  * @author zk
  */
 
-const { DEFAULT_PICTURE } = require('../conf/constant')
+const { DEFAULT_PICTURE,REG_FOR_AT_WHO } = require('../conf/constant')
 const timeFormat = require('../utils/dt')
 /**
  * 
@@ -36,6 +36,12 @@ function _formatBlogTime(obj) {
   obj.updatedAtFormat = timeFormat(obj.updatedAt)
   return obj
 }
+function _formatBlogContent(obj){
+  obj.content = obj.content.replace(REG_FOR_AT_WHO,(match, nickName, userName) => {
+    return `<a href = '/profile/${userName}'>@${nickName}</a>`
+  })
+  return obj
+}
 /**
  * 
  * @param {Object|Array} list blogList
@@ -46,9 +52,12 @@ function formatBlog(list){
     return list
   }
   if(list instanceof Array) {
-    return list.map(_formatBlogTime)
+    return list.map(_formatBlogTime).map(_formatBlogContent)
   }
-  return _formatBlogTime(list)
+  let result = list
+  result = _formatDBTime(result)
+  result = _formatContent(result)
+  return result
 }
 
 
