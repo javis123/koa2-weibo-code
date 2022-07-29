@@ -3,12 +3,13 @@ const { Blog,User,UserRelation } = require('../db/model/index')
 const { formatUser,formatBlog } = require('./_format')
 
 async function createBlog({ userId, content, image }) {
-  const result = Blog.create({
+  const result = await Blog.create({
     userId,
     content,
     image
   })
-  return result.dataVaules
+  // console.log(result)
+  return result.dataValues
 }
 /**
  * 根据用户获取微博列表
