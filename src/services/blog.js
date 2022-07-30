@@ -70,12 +70,13 @@ async function getFollowersBlogList({ userId, pageIndex = 0, pageSize = 10}) {
     ]
   })
   let blogList = result.rows.map(row => row.dataValues)
-  blogList = formatBlog(blogList)
   blogList = blogList.map(blogItem => {
     // console.log(blogItem)
+    blogItem.originContent = blogItem.content
     blogItem.user = formatUser(blogItem.user.dataValues)
     return blogItem
   })
+  blogList = formatBlog(blogList)
   return {
     count: result.count,
     blogList

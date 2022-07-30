@@ -10,6 +10,7 @@ const { isExist } = require('../../controller/user')
 const { getSquareBlogList } = require('../../controller/blog-square')
 const { getFans,getFollowers } = require('../../controller/user-relation')
 const { getHomeBlogList } = require('../../controller/blog-home')
+const { getAtMeCount,getAtMeBlogList } = require('../../controller/blog-at')
 
 //首页
 router.get('/', loginRedirect, async (ctx, next) => {
@@ -18,11 +19,14 @@ router.get('/', loginRedirect, async (ctx, next) => {
   // console.log('userId:',userId)
   const fansResult = (await getFans(userId)).data
   const { count: fansCount, fansList } = fansResult
-  console.log(fansList)
+  // console.log(fansList)
   const followersResult = (await getFollowers(userId)).data
   const { count: followersCount, followersList } = followersResult
   const res = await getHomeBlogList(userId,0)
   const { blogList, count, pageIndex, pageSize, isEmpty } = res.data
+  //获取at的数量
+  const { count: blogAtCount } = (await getAtMeCount(userId)).data
+  // console.log('这是被at的数量：',blogAtCount)
   await ctx.render('index',{
     userData: {
       userInfo,
@@ -33,7 +37,8 @@ router.get('/', loginRedirect, async (ctx, next) => {
       followersData: {
         count: followersCount,
         list: followersList
-      }
+      },
+      atCount: blogAtCount
     },
     blogData: {
       blogList,
@@ -53,11 +58,13 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
   const myUserInfo = ctx.session.userInfo
   const myUserName = myUserInfo.userName
   const { userName: curUserName } = ctx.params
+  let blogAtCount
   //看是不是登陆的人
   const isMe = myUserName === curUserName
   let curUserInfo
   if(isMe){
     curUserInfo = myUserInfo
+    blogAtCount = (await getAtMeCount(myUserInfo.id)).data.count
   }else{
     //看你查的这个人是否存在
     const result = await isExist(curUserName)
@@ -78,6 +85,7 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
   //获取微博列表
   const result = await getProfileBlogList(curUserName, 0)
   const { isEmpty, blogList, count, pageIndex, pageSize } = result.data
+  // console.log('贝阿特的数量为：',blogAtCount)
   await ctx.render('profile', {
     blogData: {
       isEmpty,
@@ -97,7 +105,8 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
         count: followersCount,
         list: followersList
       },
-      amIFollowed
+      amIFollowed,
+      atCount: blogAtCount
     },
   })
 })
@@ -115,5 +124,29 @@ router.get('/square', loginRedirect, async (ctx, next) => {
     }
   })
 
+})
+//at-me路由
+router.get('/at-me',loginRedirect, async (ctx, next) => {
+  const { id: userId } = ctx.session.userInfo
+  //获取@数量
+  const { count: blogAtCount } = (await getAtMeCount(userId)).data
+  //获取第一列列表
+  const result = await getAtMeBlogList(userId)
+  const { blogList, count, pageIndex, pageSize, isEmpty } = result.data
+  //渲染页面
+  await ctx.render('atMe', {
+    atCount: blogAtCount,
+    blogData: {
+      blogList,
+      count,
+      pageIndex,
+      pageSize,
+      isEmpty
+    }
+  })
+  //标记为已读
+  if(blogAtCount > 0){
+
+  }
 })
 module.exports = router
