@@ -2,7 +2,11 @@
  * '@description 处理@ 信息的control
  * @author zk
  */
-const { getAtRelationCount,getAtUserBlogList } = require('../services/at-relation')
+const { 
+  getAtRelationCount,
+  getAtUserBlogList, 
+  updateAtRelation
+} = require('../services/at-relation')
 const { PAGE_SIZE } = require('../conf/constant')
 const { SuccessModel } = require('../model/ResModel')
 /**
@@ -30,7 +34,24 @@ async function getAtMeBlogList(userId, pageIndex = 0) {
     isEmpty: blogList.length === 0
   })
 }
+/**
+ * 更新@ 消息的读取状态
+ * @param {number} userId userid
+ */
+async function markAsRead(userId) {
+  try{
+    await updateAtRelation(
+      { newIsRead: true },
+      { userId,
+        isRead: false
+      }
+    )
+  }catch(ex){
+    console.error(ex)
+  }
+}
 module.exports = {
   getAtMeCount,
-  getAtMeBlogList
+  getAtMeBlogList,
+  markAsRead
 }
