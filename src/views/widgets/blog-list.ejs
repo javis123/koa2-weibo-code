@@ -18,7 +18,7 @@
           <% if (locals.canReply) { %>
           <%# 可以回复 %>
           <a href="#" class="blog-list-reply"
-              data-content="<%= blog.content%>"
+              data-content="<%= blog.originContent%>"
               data-userName="<%= blog.user.userName%>"
               data-nickName="<%= blog.user.nickName%>"
           >

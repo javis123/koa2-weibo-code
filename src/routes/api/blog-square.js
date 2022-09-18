@@ -15,6 +15,7 @@ router.get('/loadMore/:pageIndex', loginCheck, async (ctx, next) => {
   let { pageIndex } = ctx.params
   pageIndex = parseInt(pageIndex)
   const result = await getSquareBlogList(pageIndex)
+  console.log(result)
   result.data.blogListTpl = getBlogListStr(result.data.blogList)
   ctx.body = result
 })

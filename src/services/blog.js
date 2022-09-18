@@ -3,12 +3,13 @@ const { Blog,User,UserRelation } = require('../db/model/index')
 const { formatUser,formatBlog } = require('./_format')
 
 async function createBlog({ userId, content, image }) {
-  const result = Blog.create({
+  const result = await Blog.create({
     userId,
     content,
     image
   })
-  return result.dataVaules
+  // console.log(result)
+  return result.dataValues
 }
 /**
  * 根据用户获取微博列表
@@ -69,12 +70,13 @@ async function getFollowersBlogList({ userId, pageIndex = 0, pageSize = 10}) {
     ]
   })
   let blogList = result.rows.map(row => row.dataValues)
-  blogList = formatBlog(blogList)
   blogList = blogList.map(blogItem => {
     // console.log(blogItem)
+    blogItem.originContent = blogItem.content
     blogItem.user = formatUser(blogItem.user.dataValues)
     return blogItem
   })
+  blogList = formatBlog(blogList)
   return {
     count: result.count,
     blogList
